@@ -2,9 +2,7 @@ import bcrypt
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from config import settings
-from datetime import datetime, timedelta, timezone
 
-from jose import JWTError, jwt
 
 # from config.settings import settings
 

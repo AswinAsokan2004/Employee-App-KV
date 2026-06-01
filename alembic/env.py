@@ -10,7 +10,6 @@ from alembic import context
 from config import settings
 from database.connection import Base
 
-from models.employee import Employee
 
 config = context.config
 

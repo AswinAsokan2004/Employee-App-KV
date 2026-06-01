@@ -6,7 +6,7 @@ def hashed_password():
     return hash_password("secret123")
 
 def test_verify_password_accepts_correct_password(hashed_password):
-    hashed = hash_password("secret123")
+    # hashed = hash_password("secret123")
     assert verify_password("secret123", hashed_password) is True
 
 

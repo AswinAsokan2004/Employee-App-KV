@@ -1,26 +1,15 @@
 import logging
-from sqlite3 import IntegrityError
 
-from fastapi import Body, Depends, FastAPI, HTTPException, Request, status
-from typing import List, TypedDict
-from dataclasses import dataclass
+from fastapi import Body, Depends, FastAPI, HTTPException, status
 
-from fastapi.concurrency import asynccontextmanager
-from fastapi.responses import JSONResponse
 from sqlalchemy import delete, select
-from config import Settings
-from exceptions.exceptions import AppException, NotFoundException, ConflictException, BadRequestException
 from middleware import configure_middleware
-from middleware.logger import RequestLoggingMiddleware
-from fastapi.middleware.cors import CORSMiddleware
-from database.connection import create_tables, get_db
+from database.connection import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.employee import Employee
 
-from repositories.employee_repo import create
+from sqlalchemy import update
 from routers import employee_router
-from routers.employee_router import router as employee_router_pack
-import pdb
 
 from employees.router import router as package_router
 from departments.department_router import router_dep
@@ -67,8 +56,6 @@ async def create_employee(body: dict = Body(...)):
     result = await employee_router.create(body=body)
     return result
 
-from sqlalchemy import select, update
-from fastapi import HTTPException
 
 @app.patch("/employee/patch/{id}", tags=["Employees"])
 async def update_employee_by_id(

@@ -1,13 +1,11 @@
-from typing import List
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 from auth.dependancies import get_current_user, require_role
 from auth.schema import LoginResponse, TokenPayload
 from database.connection import get_db
 from employees import employee_services
-from employees.schemas import EmployeeCreate, EmployeePatch, EmployeeResponds, EmployeeGetByIDResponds, EmployeeUpdate, MessageResponds, loginRequest, loginResponds
+from employees.schemas import EmployeeCreate, EmployeePatch, EmployeeResponds, EmployeeGetByIDResponds, EmployeeUpdate, MessageResponds
 from exceptions.exceptions import UnAutherizedException
 from auth.utils import (
     verify_token,

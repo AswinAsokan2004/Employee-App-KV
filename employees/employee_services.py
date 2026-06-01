@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from exceptions.exceptions import NotFoundException
 from auth.utils import (
-    create_access_token,
     create_refresh_token
 )
 

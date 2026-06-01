@@ -2,12 +2,14 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from exceptions.exceptions import ConflictException, NotFoundException
-from models.employee import Employee
+# from models.employee import Employee
 from sqlalchemy.exc import IntegrityError
 from fastapi import status
 from datetime import datetime
 from models.department import Department
-from models.employee import Employee, Address
+from models.employee import Address
+from sqlalchemy.orm import selectinload
+from models.employee import Employee
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,7 +20,7 @@ async def create(name:str, email:str, age:int, password_hash: str, db: AsyncSess
     try:
         await db.commit()
         logger.info(f"Username: {name}, Email: {email} - Get Created")
-    except IntegrityError as exc:
+    except IntegrityError:
         await db.rollback()
         raise ConflictException(detail=f"Email '{email.strip()}' is already in use")
     await db.refresh(db_employee)
@@ -90,7 +92,7 @@ async def patch_employee(
 
     try:
         await db.commit()
-    except IntegrityError as exc:
+    except IntegrityError:
         await db.rollback()
         raise ConflictException(detail="Email already exists")
 
@@ -118,11 +120,6 @@ async def delete_employee(
 
 
 
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
-
-from models.employee import Employee
-from models.department import Department
 
 
 async def attach_department(

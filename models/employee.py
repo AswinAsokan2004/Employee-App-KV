@@ -9,7 +9,6 @@ from typing import Any, Optional
 from sqlalchemy import DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database.connection import Base
 from models.entity import Entity
 from models.employee_department import employee_departments
 from models.department import Department

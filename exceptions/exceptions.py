@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 
 class AppException(Exception):
     """Base for all application-level errors."""

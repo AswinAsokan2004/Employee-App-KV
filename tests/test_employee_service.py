@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from database import Base
 from employees import employee_services as employee_service
-from employees.schemas import EmployeeCreate
 
 
 @pytest.mark.anyio
@@ -22,11 +21,11 @@ async def test_create_employee_persists_the_record():
 
     async with AsyncSessionLocal() as db:
 
-        body = EmployeeCreate(
-            name="Ada",
-            email="ada@example.com",
-            password="secret123"
-        )
+        # body = EmployeeCreate(
+        #     name="Ada",
+        #     email="ada@example.com",
+        #     password="secret123"
+        # )
 
         employee = await employee_service.create(
             name="Ada",

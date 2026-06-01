@@ -2,7 +2,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from employees import address_repo
 from exceptions.exceptions import NotFoundException
-from employees import address_repo
 
 async def create(
     employee_id: int,

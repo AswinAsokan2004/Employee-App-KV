@@ -5,224 +5,155 @@ from employees import employee_repo
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from exceptions.exceptions import NotFoundException
-from auth.utils import (
-    create_refresh_token
-)
+from auth.utils import create_refresh_token
+
 
 async def create(name: str, email: str, age: int, password: str, db: AsyncSession):
     if not isinstance(name, str) or not name.strip():
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="name must be a non-empty string")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="name must be a non-empty string",
+        )
     if not isinstance(email, str) or not email.strip():
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="email must be a non-empty string")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="email must be a non-empty string",
+        )
     password_hashed = hash_password(password)
-    employee = await employee_repo.create(name=name, email=email, age=age, password_hash=password_hashed, db=db)
+    employee = await employee_repo.create(
+        name=name, email=email, age=age, password_hash=password_hashed, db=db
+    )
     return employee
+
 
 async def get_all_employee(db: AsyncSession):
     result = await employee_repo.get_all_employee(db=db)
     return [r.to_api_dict() for r in result.all()]
 
+
 async def get_employee_by_id(employee_id: int, db: AsyncSession):
     result = await employee_repo.get_employee_by_id(employee_id=employee_id, db=db)
     # try:
     if not result:
-        raise NotFoundException(detail="Employees...! Not Found try again with valid id")  #HTTPException(status_code=404, detail="Employee not found")
+        raise NotFoundException(
+            detail="Employees...! Not Found try again with valid id"
+        )  # HTTPException(status_code=404, detail="Employee not found")
     return result.to_api_dict()
     # except NotFoundException as e:
     #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
 
 # async def get_by_email(email: str, password: str, db: AsyncSession):
 #     employee = await employee_repo.get_by_email(email=email, db=db)
 #     if employee is None:
 #         raise NotFoundException(detail="No employee found from repo")
-    
+
 #     if not verify_password(plain=password.strip(),hashed=employee.password_hash):
 #         raise NotFoundException(detail="Password Verification failed in services")
+
 
 #     data_body = {"email":email, "password":password}
 #     result = create_access_token(data=data_body)
 #     return result
-async def get_by_email(
-    email: str,
-    password: str,
-    db: AsyncSession
-):
-    employee = await employee_repo.get_by_email(
-        email=email,
-        db=db
-    )
+async def get_by_email(email: str, password: str, db: AsyncSession):
+    employee = await employee_repo.get_by_email(email=email, db=db)
 
     if employee is None:
-        raise NotFoundException(
-            detail="Employee not found"
-        )
+        raise NotFoundException(detail="Employee not found")
 
-    if not verify_password(
-        plain=password.strip(),
-        hashed=employee.password_hash
-    ):
-        raise NotFoundException(
-            detail="Invalid password"
-        )
+    if not verify_password(plain=password.strip(), hashed=employee.password_hash):
+        raise NotFoundException(detail="Invalid password")
 
     payload = {
         "sub": str(employee.id),
         "email": employee.email,
-        "role": employee.role.value
+        "role": employee.role.value,
     }
 
-    access_token = create_access_token(
-        data=payload
-    )
+    access_token = create_access_token(data=payload)
 
-    refresh_token = create_refresh_token(
-        data=payload
-    )
+    refresh_token = create_refresh_token(data=payload)
 
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
     }
+
 
 async def update_employee(
-    employee_id: int,
-    name: str,
-    email: str,
-    age: int,
-    db: AsyncSession
+    employee_id: int, name: str, email: str, age: int, db: AsyncSession
 ):
     employee = await employee_repo.update_employee(
-        employee_id=employee_id,
-        name=name,
-        email=email,
-        age=age,
-        db=db
+        employee_id=employee_id, name=name, email=email, age=age, db=db
     )
 
     if employee is None:
-        raise NotFoundException(
-            detail="Employee not found"
-        )
+        raise NotFoundException(detail="Employee not found")
 
     return employee.to_api_dict()
 
-async def patch_employee(
-    employee_id: int,
-    data: dict,
-    db: AsyncSession
-):
+
+async def patch_employee(employee_id: int, data: dict, db: AsyncSession):
     employee = await employee_repo.patch_employee(
-        employee_id=employee_id,
-        data=data,
-        db=db
+        employee_id=employee_id, data=data, db=db
     )
 
     if employee is None:
-        raise NotFoundException(
-            detail="Employee not found"
-        )
+        raise NotFoundException(detail="Employee not found")
 
     return employee.to_api_dict()
 
 
-async def delete_employee(
-    employee_id: int,
-    db: AsyncSession
-):
-    employee = await employee_repo.delete_employee(
-        employee_id=employee_id,
-        db=db
-    )
+async def delete_employee(employee_id: int, db: AsyncSession):
+    employee = await employee_repo.delete_employee(employee_id=employee_id, db=db)
 
     if employee is None:
-        raise NotFoundException(
-            detail="Employee not found"
-        )
+        raise NotFoundException(detail="Employee not found")
 
-    return {
-        "message": f"Employee {employee_id} deleted successfully"
-    }
+    return {"message": f"Employee {employee_id} deleted successfully"}
 
 
-
-async def attach_department(
-    employee_id: int,
-    department_id: int,
-    db: AsyncSession
-):
+async def attach_department(employee_id: int, department_id: int, db: AsyncSession):
     result, error = await employee_repo.attach_department(
-        employee_id=employee_id,
-        department_id=department_id,
-        db=db
+        employee_id=employee_id, department_id=department_id, db=db
     )
 
     if error == "employee":
-        raise NotFoundException(
-            detail="Employee not found"
-        )
+        raise NotFoundException(detail="Employee not found")
 
     if error == "department":
-        raise NotFoundException(
-            detail="Department not found"
-        )
+        raise NotFoundException(detail="Department not found")
 
-    return {
-        "message": "Department attached successfully"
-    }
+    return {"message": "Department attached successfully"}
 
-async def detach_department(
-    employee_id: int,
-    department_id: int,
-    db: AsyncSession
-):
+
+async def detach_department(employee_id: int, department_id: int, db: AsyncSession):
     result, error = await employee_repo.detach_department(
-        employee_id=employee_id,
-        department_id=department_id,
-        db=db
+        employee_id=employee_id, department_id=department_id, db=db
     )
 
     if error == "employee":
-        raise NotFoundException(
-            detail="Employee not found"
-        )
+        raise NotFoundException(detail="Employee not found")
 
     if error == "department":
-        raise NotFoundException(
-            detail="Department not found"
-        )
+        raise NotFoundException(detail="Department not found")
 
-    return {
-        "message": "Department detached successfully"
-    }
+    return {"message": "Department detached successfully"}
 
-async def delete_employee_address(
-    employee_id: int,
-    address_id: int,
-    db: AsyncSession
-):
+
+async def delete_employee_address(employee_id: int, address_id: int, db: AsyncSession):
     result, error = await employee_repo.delete_employee_address(
-        employee_id=employee_id,
-        address_id=address_id,
-        db=db
+        employee_id=employee_id, address_id=address_id, db=db
     )
 
     if error == "employee":
-        raise NotFoundException(
-            detail="Employee not found"
-        )
+        raise NotFoundException(detail="Employee not found")
 
     if error == "address":
-        raise NotFoundException(
-            detail="Address not found"
-        )
+        raise NotFoundException(detail="Address not found")
 
     if error == "ownership":
-        raise NotFoundException(
-            detail="Address does not belong to employee"
-        )
+        raise NotFoundException(detail="Address does not belong to employee")
 
-    return {
-        "message": "Address deleted successfully"
-    }
-
+    return {"message": "Address deleted successfully"}

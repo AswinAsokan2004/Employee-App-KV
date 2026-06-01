@@ -14,13 +14,10 @@ async def test_create_employee_persists_the_record():
         await conn.run_sync(Base.metadata.create_all)
 
     AsyncSessionLocal = sessionmaker(
-        bind=engine,
-        class_=AsyncSession,
-        expire_on_commit=False
+        bind=engine, class_=AsyncSession, expire_on_commit=False
     )
 
     async with AsyncSessionLocal() as db:
-
         # body = EmployeeCreate(
         #     name="Ada",
         #     email="ada@example.com",
@@ -28,11 +25,7 @@ async def test_create_employee_persists_the_record():
         # )
 
         employee = await employee_service.create(
-            name="Ada",
-            email="ada@example.com",
-            age=23,
-            password="secret123",
-            db=db
+            name="Ada", email="ada@example.com", age=23, password="secret123", db=db
         )
 
         assert employee.id is not None

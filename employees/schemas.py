@@ -1,8 +1,13 @@
-
-
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, EmailStr, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    EmailStr,
+    model_validator,
+)
 
 
 class AddressCreate(BaseModel):
@@ -18,7 +23,6 @@ class AddressCreate(BaseModel):
         if not v.isdigit():
             raise ValueError("Postal code should only be a number")
         return v
-    
 
     @model_validator(mode="after")
     def postal_code_length_for_country(self):
@@ -30,38 +34,40 @@ class AddressCreate(BaseModel):
             raise ValueError("Indian PIN codes must be exactly 6 digits")
         return self
 
+
 class EmployeeCreate(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
     name: str
     email: EmailStr
-    age: int | None = Field(ge=0, le= 150, default=None)
+    age: int | None = Field(ge=0, le=150, default=None)
     password: str
     address: AddressCreate | None = None
 
-class EmployeeResponds(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True
-    )
-    id: int
-    name: str
-    email: EmailStr
-    age: int | None 
 
-class EmployeeGetByIDResponds(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+class EmployeeResponds(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
     email: EmailStr
     age: int | None
 
+
+class EmployeeGetByIDResponds(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    name: str
+    email: EmailStr
+    age: int | None
+
+
 class loginRequest(BaseModel):
     email: EmailStr
     password: str
 
+
 class loginResponds(BaseModel):
     token: str
+
 
 class EmployeeUpdate(BaseModel):
     name: str
@@ -74,9 +80,10 @@ class EmployeePatch(BaseModel):
     email: Optional[EmailStr] = None
     age: Optional[int] = None
 
+
 class MessageResponds(BaseModel):
     message: str
 
+
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
-

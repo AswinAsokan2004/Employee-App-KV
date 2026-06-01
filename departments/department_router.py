@@ -8,106 +8,51 @@ from departments.schemas import (
     DepartmentUpdate,
     DepartmentPatch,
     DepartmentResponse,
-    MessageResponds
+    MessageResponds,
 )
 
-router_dep = APIRouter(
-    prefix="/department",
-    tags=["Departments"]
-)
+router_dep = APIRouter(prefix="/department", tags=["Departments"])
 
 
 @router_dep.post(
-    "/create",
-    status_code=status.HTTP_201_CREATED,
-    response_model=DepartmentResponse
+    "/create", status_code=status.HTTP_201_CREATED, response_model=DepartmentResponse
 )
-async def create(
-    body: DepartmentCreate,
-    db: AsyncSession = Depends(get_db)
-):
-    return await department_services.create(
-        name=body.name,
-        db=db
-    )
+async def create(body: DepartmentCreate, db: AsyncSession = Depends(get_db)):
+    return await department_services.create(name=body.name, db=db)
 
 
 @router_dep.get(
-    "/get",
-    status_code=status.HTTP_200_OK,
-    response_model=list[DepartmentResponse]
+    "/get", status_code=status.HTTP_200_OK, response_model=list[DepartmentResponse]
 )
-async def get_all(
-    db: AsyncSession = Depends(get_db)
-):
-    return await department_services.get_all(
-        db=db
-    )
+async def get_all(db: AsyncSession = Depends(get_db)):
+    return await department_services.get_all(db=db)
 
 
 @router_dep.get(
-    "/get/{id}",
-    status_code=status.HTTP_200_OK,
-    response_model=DepartmentResponse
+    "/get/{id}", status_code=status.HTTP_200_OK, response_model=DepartmentResponse
 )
-async def get_by_id(
-    id: int,
-    db: AsyncSession = Depends(get_db)
-):
-    return await department_services.get_by_id(
-        department_id=id,
-        db=db
-    )
+async def get_by_id(id: int, db: AsyncSession = Depends(get_db)):
+    return await department_services.get_by_id(department_id=id, db=db)
 
 
 @router_dep.put(
-    "/update/{id}",
-    status_code=status.HTTP_200_OK,
-    response_model=DepartmentResponse
+    "/update/{id}", status_code=status.HTTP_200_OK, response_model=DepartmentResponse
 )
-async def update(
-    id: int,
-    body: DepartmentUpdate,
-    db: AsyncSession = Depends(get_db)
-):
-    return await department_services.update(
-        department_id=id,
-        name=body.name,
-        db=db
-    )
+async def update(id: int, body: DepartmentUpdate, db: AsyncSession = Depends(get_db)):
+    return await department_services.update(department_id=id, name=body.name, db=db)
 
 
 @router_dep.patch(
-    "/patch/{id}",
-    status_code=status.HTTP_200_OK,
-    response_model=DepartmentResponse
+    "/patch/{id}", status_code=status.HTTP_200_OK, response_model=DepartmentResponse
 )
-async def patch(
-    id: int,
-    body: DepartmentPatch,
-    db: AsyncSession = Depends(get_db)
-):
-    data = body.model_dump(
-        exclude_unset=True
-    )
+async def patch(id: int, body: DepartmentPatch, db: AsyncSession = Depends(get_db)):
+    data = body.model_dump(exclude_unset=True)
 
-    return await department_services.patch(
-        department_id=id,
-        data=data,
-        db=db
-    )
+    return await department_services.patch(department_id=id, data=data, db=db)
 
 
 @router_dep.delete(
-    "/delete/{id}",
-    status_code=status.HTTP_200_OK,
-    response_model=MessageResponds
+    "/delete/{id}", status_code=status.HTTP_200_OK, response_model=MessageResponds
 )
-async def delete(
-    id: int,
-    db: AsyncSession = Depends(get_db)
-):
-    return await department_services.delete(
-        department_id=id,
-        db=db
-    )
+async def delete(id: int, db: AsyncSession = Depends(get_db)):
+    return await department_services.delete(department_id=id, db=db)

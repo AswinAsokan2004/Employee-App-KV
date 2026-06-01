@@ -8,13 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.department import Department
 
 
-async def create(
-    name: str,
-    db: AsyncSession
-):
-    department = Department(
-        name=name.strip()
-    )
+async def create(name: str, db: AsyncSession):
+    department = Department(name=name.strip())
 
     db.add(department)
 
@@ -25,8 +20,7 @@ async def create(
         await db.rollback()
 
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Department already exists"
+            status_code=status.HTTP_409_CONFLICT, detail="Department already exists"
         ) from exc
 
     await db.refresh(department)
@@ -34,25 +28,17 @@ async def create(
     return department
 
 
-async def get_all(
-    db: AsyncSession
-):
-    stmt = select(Department).where(
-        Department.deleted_at.is_(None)
-    )
+async def get_all(db: AsyncSession):
+    stmt = select(Department).where(Department.deleted_at.is_(None))
 
     result = await db.scalars(stmt)
 
     return result.all()
 
 
-async def get_by_id(
-    department_id: int,
-    db: AsyncSession
-):
+async def get_by_id(department_id: int, db: AsyncSession):
     stmt = select(Department).where(
-        Department.id == department_id,
-        Department.deleted_at.is_(None)
+        Department.id == department_id, Department.deleted_at.is_(None)
     )
 
     result = await db.scalar(stmt)
@@ -60,15 +46,8 @@ async def get_by_id(
     return result
 
 
-async def update(
-    department_id: int,
-    name: str,
-    db: AsyncSession
-):
-    department = await get_by_id(
-        department_id=department_id,
-        db=db
-    )
+async def update(department_id: int, name: str, db: AsyncSession):
+    department = await get_by_id(department_id=department_id, db=db)
 
     if department is None:
         return None
@@ -82,15 +61,8 @@ async def update(
     return department
 
 
-async def patch(
-    department_id: int,
-    data: dict,
-    db: AsyncSession
-):
-    department = await get_by_id(
-        department_id=department_id,
-        db=db
-    )
+async def patch(department_id: int, data: dict, db: AsyncSession):
+    department = await get_by_id(department_id=department_id, db=db)
 
     if department is None:
         return None
@@ -105,14 +77,8 @@ async def patch(
     return department
 
 
-async def delete(
-    department_id: int,
-    db: AsyncSession
-):
-    department = await get_by_id(
-        department_id=department_id,
-        db=db
-    )
+async def delete(department_id: int, db: AsyncSession):
+    department = await get_by_id(department_id=department_id, db=db)
 
     if department is None:
         return None

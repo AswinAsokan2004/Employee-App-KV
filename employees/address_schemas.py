@@ -25,9 +25,7 @@ class AddressPatch(BaseModel):
 
 
 class AddressResponse(BaseModel):
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    model_config = ConfigDict(from_attributes=True)
     # id: int
     # employee_id: int
 

@@ -24,5 +24,6 @@ class DepartmentResponse(BaseModel):
     updated_at: datetime | None = None
     deleted_at: datetime | None = None
 
+
 class MessageResponds(BaseModel):
     message: str

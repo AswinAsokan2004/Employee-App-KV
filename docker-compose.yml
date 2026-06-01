@@ -17,7 +17,24 @@ services:
 
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/employee_db
-
+    develop:
+      watch:
+        - path: .
+          target: /app
+          action: sync
+        - path: ./uv.lock
+          action: rebuild
+    command:  [
+      "uv",
+      "run",
+      "uvicorn",
+      "main:app",
+      "--host",
+      "0.0.0.0",
+      "--port",
+      "8000",
+      "--reload"
+    ]
   postgres:
     image: postgres:16-alpine
 

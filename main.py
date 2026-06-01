@@ -47,10 +47,9 @@ app = FastAPI(
     version="1.0.0",
     # lifespan=lifespan
 )
-from auth.dependancies import get_current_user
 register_exception_handler(app=app)
 configure_middleware(app)
-# app.include_router(employee_router_pack)
+
 app.include_router(package_router)
 app.include_router(router_dep)
 app.include_router(router_address)

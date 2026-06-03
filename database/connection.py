@@ -13,7 +13,6 @@ from sqlalchemy.orm import DeclarativeBase
 
 from config import settings
 
-# DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/employee_db"
 DATABASE_URL = settings.database_url
 
 

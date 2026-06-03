@@ -4,11 +4,14 @@ from auth.utils import create_access_token, hash_password, verify_password
 from employees import employee_repo
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from employees import address_services
 from exceptions.exceptions import NotFoundException
 from auth.utils import create_refresh_token
 
 
-async def create(name: str, email: str, age: int, password: str, db: AsyncSession):
+async def create(
+    name: str, email: str, age: int, password: str, address: dict, db: AsyncSession
+):
     if not isinstance(name, str) or not name.strip():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -19,11 +22,22 @@ async def create(name: str, email: str, age: int, password: str, db: AsyncSessio
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="email must be a non-empty string",
         )
+
     password_hashed = hash_password(password)
     employee = await employee_repo.create(
         name=name, email=email, age=age, password_hash=password_hashed, db=db
     )
-    return employee
+    address_list = None
+    if address is not None:
+        address_list = await address_services.create(
+            employee_id=employee.id,
+            line1=address.line1,
+            city=address.city,
+            postal_code=address.postalcode,
+            country=address.country,
+            db=db,
+        )
+    return employee, address_list
 
 
 async def get_all_employee(db: AsyncSession):
@@ -36,7 +50,9 @@ async def get_employee_by_id(employee_id: int, db: AsyncSession):
     # try:
     if not result:
         raise NotFoundException(
-            detail="Employees...! Not Found try again with valid id"
+            detail="Employee of employee id {employee_id} Not Found : try again with valid id".format(
+                employee_id=employee_id
+            )
         )  # HTTPException(status_code=404, detail="Employee not found")
     return result.to_api_dict()
     # except NotFoundException as e:
@@ -157,3 +173,14 @@ async def delete_employee_address(employee_id: int, address_id: int, db: AsyncSe
         raise NotFoundException(detail="Address does not belong to employee")
 
     return {"message": "Address deleted successfully"}
+
+
+async def get_employee_departments(employee_id: int, db: AsyncSession):
+    result = await employee_repo.get_employee_departments(
+        employee_id=employee_id, db=db
+    )
+
+    if result is None:
+        raise NotFoundException(detail="Employee not found")
+
+    return result  # [department.name for department in result]

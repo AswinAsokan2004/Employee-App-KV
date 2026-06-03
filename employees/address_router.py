@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from auth.dependancies import get_current_user
+from auth.dependancies import get_current_user, require_role
 from auth.schema import TokenPayload
 from database.connection import get_db
 from employees import address_services
@@ -13,11 +13,12 @@ from employees.address_schemas import (
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from employees.schemas import MessageResponds
+from models.employee import EmployeeRole
 
 router_address = APIRouter(prefix="/address", tags=["Address"])
 
 
-@router_address.post("/address/create/{employee_id}", response_model=AddressResponse)
+@router_address.post("/create", response_model=AddressResponse)
 async def create_address(
     employee_id: int,
     body: AddressCreate,
@@ -34,9 +35,7 @@ async def create_address(
     )
 
 
-@router_address.get(
-    "/address/get", tags=["Address"], response_model=list[AddressResponse]
-)
+@router_address.get("/get", tags=["Address"], response_model=list[AddressResponse])
 async def get_all_addresses(db: AsyncSession = Depends(get_db)):
     return await address_services.get_all(db=db)
 
@@ -53,7 +52,7 @@ async def get_address_by_id(
 
 
 @router_address.get(
-    "/address/get/employee/{employee_id}",
+    "/get/employee/{employee_id}",
     tags=["Address"],
     response_model=list[AddressResponse],
 )
@@ -66,7 +65,10 @@ async def get_employee_addresses(
 
 
 @router_address.put(
-    "/address/update/{id}", tags=["Address"], response_model=AddressResponse
+    "/update/{id}",
+    tags=["Address"],
+    response_model=AddressResponse,
+    dependencies=[Depends(require_role(EmployeeRole.HR))],
 )
 async def update_address(
     id: int,
@@ -85,7 +87,10 @@ async def update_address(
 
 
 @router_address.patch(
-    "/address/patch/{id}", tags=["Address"], response_model=AddressResponse
+    "/patch/{id}",
+    tags=["Address"],
+    response_model=AddressResponse,
+    dependencies=[Depends(require_role(EmployeeRole.HR))],
 )
 async def patch_address(
     id: int,
@@ -99,7 +104,10 @@ async def patch_address(
 
 
 @router_address.delete(
-    "/address/delete/{id}", tags=["Address"], response_model=MessageResponds
+    "/delete/{id}",
+    tags=["Address"],
+    response_model=MessageResponds,
+    dependencies=[Depends(require_role(EmployeeRole.HR))],
 )
 async def delete_address(
     id: int,

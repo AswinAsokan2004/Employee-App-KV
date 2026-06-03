@@ -92,36 +92,36 @@ async def update_employee_by_id(
     return updated_employee.to_api_dict()
 
 
-@app.put("/employee/patch/{id}", tags=["Employees"])
-async def update_employee_full_by_id(
-    id: int, name: str, email: str, db: AsyncSession = Depends(get_db)
-):
-    stmt = select(Employee).where(Employee.deleted_at.is_(None), Employee.id == id)
+# @app.put("/employee/patch/{id}", tags=["Employees"])
+# async def update_employee_full_by_id(
+#     id: int, name: str, email: str, db: AsyncSession = Depends(get_db)
+# ):
+#     stmt = select(Employee).where(Employee.deleted_at.is_(None), Employee.id == id)
 
-    employee = await db.scalar(stmt)
+#     employee = await db.scalar(stmt)
 
-    if not employee:
-        raise HTTPException(status_code=404, detail="Employee not found")
+#     if not employee:
+#         raise HTTPException(status_code=404, detail="Employee not found")
 
-    update_data = {}
+#     update_data = {}
 
-    if name is not None:
-        update_data["name"] = name
+#     if name is not None:
+#         update_data["name"] = name
 
-    if email is not None:
-        update_data["email"] = email
+#     if email is not None:
+#         update_data["email"] = email
 
-    if not update_data:
-        raise HTTPException(status_code=400, detail="No fields provided for update")
+#     if not update_data:
+#         raise HTTPException(status_code=400, detail="No fields provided for update")
 
-    stmt = update(Employee).where(Employee.id == id).values(**update_data)
+#     stmt = update(Employee).where(Employee.id == id).values(**update_data)
 
-    await db.execute(stmt)
-    await db.commit()
+#     await db.execute(stmt)
+#     await db.commit()
 
-    updated_employee = await db.scalar(select(Employee).where(Employee.id == id))
+#     updated_employee = await db.scalar(select(Employee).where(Employee.id == id))
 
-    return updated_employee.to_api_dict()
+#     return updated_employee.to_api_dict()
 
 
 @app.delete("/employee/delete/{id}", tags=["Employees"])

@@ -56,6 +56,7 @@ class Address(Entity):
         """JSON-friendly representation (ISO 8601 for timestamps)."""
         return {
             "id": self.id,
+            "employee_id": self.employee_id,
             "line1": self.line1,
             "city": self.city,
             "postal_code": self.postal_code,

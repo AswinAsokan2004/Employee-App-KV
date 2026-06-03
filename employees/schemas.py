@@ -9,6 +9,8 @@ from pydantic import (
     model_validator,
 )
 
+from employees.address_schemas import AddressResponse
+
 
 class AddressCreate(BaseModel):
     line1: str
@@ -49,6 +51,7 @@ class EmployeeResponds(BaseModel):
     id: int
     name: str
     email: EmailStr
+    address: Optional[list[AddressResponse]] = None
     age: int | None
 
 

@@ -25,7 +25,12 @@ async def test_create_employee_persists_the_record():
         # )
 
         employee = await employee_service.create(
-            name="Ada", email="ada@example.com", age=23, password="secret123", db=db
+            name="Ada",
+            email="ada@example.com",
+            age=23,
+            password="secret123",
+            address=None,
+            db=db,
         )
 
         assert employee.id is not None

@@ -39,4 +39,3 @@ python_files   = ["test_*.py"]
 python_classes = ["Test*"]
             # class names that group tests
 python_functions = ["test_*"]
-

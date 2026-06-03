@@ -187,3 +187,19 @@ async def delete_employee_address(employee_id: int, address_id: int, db: AsyncSe
     await db.commit()
 
     return True, None
+
+
+async def get_employee_departments(employee_id: int, db: AsyncSession):
+
+    stmt = (
+        select(Employee)
+        .options(selectinload(Employee.departments))
+        .where(Employee.id == employee_id)
+    )
+
+    employee = await db.scalar(stmt)
+
+    if employee is None:
+        raise NotFoundException(detail="Employee not found")
+
+    return [dept.name for dept in employee.departments]
